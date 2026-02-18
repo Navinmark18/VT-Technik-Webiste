@@ -23,7 +23,7 @@
         <main>
             <!-- Modern Hero Section -->
             <section class="hero">
-                <div class="hero-bg" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1920&q=80') center/cover no-repeat;"></div>
+                <div class="hero-bg" data-hero="home"></div>
                 <div class="hero-content">
                     <div class="hero-badge">🎵 Professional Event Solutions</div>
                     <h1>Professionelle Eventtechnik</h1>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="grid-container">
                     <div class="modern-card">
-                        <div class="card-img" style="background: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&q=80') center/cover;"></div>
+                        <div class="card-img" data-service-index="0" style="--card-image: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&q=80');"></div>
                         <div class="card-content">
                             <div class="card-icon">🎤</div>
                             <h3>Tontechnik</h3>
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                     <div class="modern-card">
-                        <div class="card-img" style="background: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80') center/cover;"></div>
+                        <div class="card-img" data-service-index="1" style="--card-image: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80');"></div>
                         <div class="card-content">
                             <div class="card-icon">💡</div>
                             <h3>Lichttechnik</h3>
@@ -81,7 +81,7 @@
                         </div>
                     </div>
                     <div class="modern-card">
-                        <div class="card-img" style="background: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80') center/cover;"></div>
+                        <div class="card-img" data-service-index="2" style="--card-image: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80');"></div>
                         <div class="card-content">
                             <div class="card-icon">🎬</div>
                             <h3>Bühnentechnik</h3>
@@ -90,7 +90,7 @@
                         </div>
                     </div>
                     <div class="modern-card">
-                        <div class="card-img" style="background: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80') center/cover;"></div>
+                        <div class="card-img" data-service-index="3" style="--card-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80');"></div>
                         <div class="card-content">
                             <div class="card-icon">📹</div>
                             <h3>Videotechnik</h3>
@@ -99,7 +99,7 @@
                         </div>
                     </div>
                     <div class="modern-card">
-                        <div class="card-img" style="background: url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80') center/cover;"></div>
+                        <div class="card-img" data-service-index="4" style="--card-image: url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80');"></div>
                         <div class="card-content">
                             <div class="card-icon">🎭</div>
                             <h3>Event-Support</h3>
@@ -108,7 +108,7 @@
                         </div>
                     </div>
                     <div class="modern-card">
-                        <div class="card-img" style="background: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80') center/cover;"></div>
+                        <div class="card-img" data-service-index="5" style="--card-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80');"></div>
                         <div class="card-content">
                             <div class="card-icon">📦</div>
                             <h3>Komplettlösungen</h3>
@@ -130,11 +130,32 @@
         </main>
 
         <footer>
-            <p>&copy; 2026 Event VT | <a href="#">Impressum</a> | <a href="#">Datenschutz</a> | <button onclick="window.login()" style="cursor:pointer; background:none; border:none; color:inherit; text-decoration:underline; padding:0; font-size:inherit;">Admin Login</button> | <button id="maintenance-toggle" onclick="window.toggleMaintenance()" style="cursor:pointer; background:none; border:none; color:inherit; text-decoration:underline; padding:0; font-size:inherit; display:none;">Wartungsmodus</button></p>
+            <p>&copy; 2026 Event VT | <a href="#">Impressum</a> | <a href="#">Datenschutz</a> | <a href="admin.html">Admin Login</a></p>
         </footer>
     </div>
 
-    <!-- Floating Social Media Buttons -->
+    <!-- Floating Social Media Buttons + AI Chat -->
+    <!-- KI Chat Widget (separat positioniert) -->
+    <div class="chat-widget">
+        <button class="chat-bubble" id="chat-toggle" title="KI Assistant">🤖</button>
+        <div class="chat-container" id="chat-container">
+            <div class="chat-header">
+                <h3>Event VT Assistant</h3>
+                <button class="chat-close" id="chat-close">✕</button>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="chat-message bot">
+                    Hallo! 👋 Ich bin dein Event VT Assistant. Ich kann dir grundlegende Fragen zum Equipment und unseren Services beantworten. Wie kann ich dir helfen?
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chat-input" placeholder="Deine Frage..." maxlength="500">
+                <button class="chat-send" id="chat-send">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Links -->
     <div class="floating-buttons">
         <a href="https://wa.me/15563324870" target="_blank" class="float-btn whatsapp-btn" title="WhatsApp">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -151,11 +172,11 @@
     <style>
         .floating-buttons {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 90px;
+            right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             z-index: 999;
         }
 
@@ -220,8 +241,226 @@
             }
         }
 
+        /* KI Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .chat-bubble {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+            z-index: 1001;
+            animation: slideInRight 0.8s ease-out;
+            animation-delay: 0.6s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .chat-bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.8),
+                        0 0 50px rgba(99, 102, 241, 0.6),
+                        0 0 75px rgba(99, 102, 241, 0.4),
+                        0 8px 30px rgba(0, 0, 0, 0.5);
+            filter: brightness(1.2);
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 380px;
+            height: 500px;
+            background: rgba(15, 12, 41, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: none;
+            z-index: 1001;
+        }
+
+        .chat-container.active {
+            display: flex;
+        }
+
+        .chat-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 85%;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .chat-message.user {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            margin-left: auto;
+        }
+
+        .chat-message.bot {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .chat-message.error {
+            background: rgba(217, 83, 79, 0.2);
+            color: #ffb4b4;
+        }
+
+        .chat-input-area {
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.2);
+        }
+
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .chat-send:hover {
+            transform: translateY(-2px);
+        }
+
+        .chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat-loading {
+            display: flex;
+            gap: 6px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .chat-loading span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+
+        .chat-loading span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .chat-loading span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                opacity: 0.5;
+                transform: translateY(0);
+            }
+            40% {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+        }
+
         /* Mobile Anpassung */
         @media (max-width: 768px) {
+            .chat-container {
+                width: calc(100% - 40px);
+                height: 450px;
+                bottom: 90px;
+                right: 20px;
+                left: 20px;
+            }
+
+            .chat-message {
+                max-width: 90%;
+            }
             .floating-buttons {
                 bottom: 20px;
                 right: 20px;
@@ -240,5 +479,6 @@
     </style>
 
     <script src="./main.js"></script>
+    <script src="./chat.js"></script>
 </body>
 </html>

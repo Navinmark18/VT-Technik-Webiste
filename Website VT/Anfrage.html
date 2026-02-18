@@ -9,14 +9,14 @@
         .anfrage-hero {
             position: relative;
             padding: 100px 5% 50px;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1478147427282-58a87a120781?w=1920&q=80') center/cover no-repeat;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), var(--anfrage-hero-image) center/cover no-repeat;
             text-align: center;
         }
 
         .anfrage-hero h1 {
             font-size: 3.5rem;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #fff, #ff4d4d);
+            background: linear-gradient(135deg, #fff, var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -85,9 +85,9 @@
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #ff4d4d;
+            border-color: var(--accent);
             background: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 0 20px rgba(255, 77, 77, 0.3);
+            box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.3);
         }
 
         .form-group textarea {
@@ -116,7 +116,7 @@
         }
 
         .submit-button {
-            background: linear-gradient(135deg, #ff4d4d, #ff6b6b);
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
             color: white;
             border: none;
             padding: 18px 40px;
@@ -127,16 +127,16 @@
             transition: all 0.3s ease;
             width: 100%;
             margin-top: 20px;
-            box-shadow: 0 8px 25px rgba(255, 77, 77, 0.4);
+            box-shadow: 0 8px 25px rgba(var(--accent-rgb), 0.4);
         }
 
         .submit-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(255, 77, 77, 0.6);
+            box-shadow: 0 12px 35px rgba(var(--accent-rgb), 0.6);
         }
 
         .required {
-            color: #ff4d4d;
+            color: var(--accent);
         }
 
         .form-icon {
@@ -299,6 +299,7 @@
         </footer>
     </div>
 
+    <script src="./main.js"></script>
     <script>
         document.getElementById('anfrageForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -333,5 +334,6 @@
             }, 5000);
         });
     </script>
+    <script src="./chat.js"></script>
 </body>
 </html>

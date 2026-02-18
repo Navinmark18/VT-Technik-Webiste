@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Event VT</title>
+    <link rel="stylesheet" href="./src/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+        }
+
+        .admin-shell {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 6%;
+            background: rgba(17, 17, 17, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-header h1 {
+            font-size: 1.6rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .admin-header a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: 40px 6% 80px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        .panel h2 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+        }
+
+        .login-form {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .form-row {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-row label {
+            font-weight: 600;
+        }
+
+        .form-row input,
+        .form-row textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-row input[type="color"] {
+            padding: 0;
+            height: 44px;
+        }
+
+        .admin-button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .admin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .status {
+            margin-top: 16px;
+            font-size: 0.95rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-box {
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-box h3 {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .stat-box p {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+        }
+
+        th,
+        td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        td {
+            font-size: 0.95rem;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .settings-grid .form-row {
+            gap: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-shell">
+        <header class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <a href="index.html">Zur Website</a>
+        </header>
+
+        <main class="admin-main">
+            <section id="login-view" class="panel">
+                <h2>Admin Login</h2>
+                <form id="login-form" class="login-form">
+                    <div class="form-row">
+                        <label for="login-password">Passwort</label>
+                        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="admin-button" type="submit">Einloggen</button>
+                    </div>
+                    <div id="login-error" class="status"></div>
+                </form>
+            </section>
+
+            <section id="dashboard-view" class="hidden">
+                <div class="panel">
+                    <h2>Besucher-Statistiken</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <h3>Gesamt</h3>
+                            <p id="stat-total">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Letzte 24h</h3>
+                            <p id="stat-24h">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Letzte 7 Tage</h3>
+                            <p id="stat-7d">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Einzigartige IPs 7T</h3>
+                            <p id="stat-unique">0</p>
+                        </div>
+                    </div>
+                    <div class="admin-actions">
+                        <button id="refresh-stats" class="admin-button" type="button">Aktualisieren</button>
+                        <button id="delete-stats" class="admin-button" type="button" style="background: linear-gradient(135deg, #d9534f, #c9302c);">Alle löschen</button>
+                        <button id="logout" class="admin-button" type="button">Logout</button>
+                    </div>
+                    <div style="margin-top: 30px; max-width: 800px;">
+                        <canvas id="visits-chart"></canvas>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Zeit</th>
+                                    <th>Pfad</th>
+                                    <th>IP</th>
+                                    <th>Referrer</th>
+                                    <th>User Agent</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-visits"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Social Media Statistiken</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <h3>Gesamt Klicks</h3>
+                            <p id="social-total">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>WhatsApp</h3>
+                            <p id="social-whatsapp">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Instagram</h3>
+                            <p id="social-instagram">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Facebook</h3>
+                            <p id="social-facebook">0</p>
+                        </div>
+                    </div>
+                    <div class="admin-actions">
+                        <button id="refresh-social" class="admin-button" type="button">Aktualisieren</button>
+                        <button id="delete-social" class="admin-button" type="button" style="background: linear-gradient(135deg, #d9534f, #c9302c);">Alle löschen</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Zeit</th>
+                                    <th>Plattform</th>
+                                    <th>IP</th>
+                                    <th>User Agent</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-social"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Wartungsmodus</h2>
+                    <form id="maintenance-form">
+                        <div class="form-row">
+                            <label for="maintenance-enabled" style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                                <input id="maintenance-enabled" name="maintenanceEnabled" type="checkbox">
+                                <span>Wartungsmodus aktivieren</span>
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label for="maintenance-message">Wartungsnachricht</label>
+                            <textarea id="maintenance-message" name="maintenanceMessage" rows="4" placeholder="z.B. Wir führen gerade Wartungsarbeiten durch..."></textarea>
+                        </div>
+                        <div class="admin-actions">
+                            <button class="admin-button" type="submit">Speichern</button>
+                        </div>
+                        <div id="maintenance-status" class="status"></div>
+                    </form>
+                </div>
+
+                <div class="panel">
+                    <h2>Design Settings</h2>
+                    <form id="settings-form">
+                        <div class="settings-grid">
+                            <div class="form-row">
+                                <label for="accent">Akzentfarbe</label>
+                                <input id="accent" name="accent" type="color">
+                            </div>
+                            <div class="form-row">
+                                <label for="accent2">Akzentfarbe 2</label>
+                                <input id="accent2" name="accent2" type="color">
+                            </div>
+                            <div class="form-row">
+                                <label for="accent3">Akzentfarbe 3</label>
+                                <input id="accent3" name="accent3" type="color">
+                            </div>
+                            <div class="form-row">
+                                <label for="bg1">Background 1</label>
+                                <input id="bg1" name="bg1" type="color">
+                            </div>
+                            <div class="form-row">
+                                <label for="bg2">Background 2</label>
+                                <input id="bg2" name="bg2" type="color">
+                            </div>
+                            <div class="form-row">
+                                <label for="bg3">Background 3</label>
+                                <input id="bg3" name="bg3" type="color">
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="margin-top: 20px;">
+                            <label for="homeHero">Hero Bild (Home)</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input id="homeHero" name="homeHero" type="text" placeholder="https://..." style="flex: 1;">
+                                <input type="file" id="homeHero-file" accept="image/*" style="display: none;">
+                                <button type="button" class="admin-button" onclick="document.getElementById('homeHero-file').click()">Upload</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label for="anfrageHero">Hero Bild (Anfrage)</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input id="anfrageHero" name="anfrageHero" type="text" placeholder="https://..." style="flex: 1;">
+                                <input type="file" id="anfrageHero-file" accept="image/*" style="display: none;">
+                                <button type="button" class="admin-button" onclick="document.getElementById('anfrageHero-file').click()">Upload</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label for="mietenHero">Hero Bild (Mietportal)</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input id="mietenHero" name="mietenHero" type="text" placeholder="https://..." style="flex: 1;">
+                                <input type="file" id="mietenHero-file" accept="image/*" style="display: none;">
+                                <button type="button" class="admin-button" onclick="document.getElementById('mietenHero-file').click()">Upload</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-grid" style="margin-top: 20px;">
+                            <div class="form-row">
+                                <label for="service0">Service Bild 1</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input id="service0" name="service0" type="text" placeholder="https://..." style="flex: 1;">
+                                    <input type="file" id="service0-file" accept="image/*" style="display: none;">
+                                    <button type="button" class="admin-button" onclick="document.getElementById('service0-file').click()" style="padding: 8px 16px;">⬆</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label for="service1">Service Bild 2</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input id="service1" name="service1" type="text" placeholder="https://..." style="flex: 1;">
+                                    <input type="file" id="service1-file" accept="image/*" style="display: none;">
+                                    <button type="button" class="admin-button" onclick="document.getElementById('service1-file').click()" style="padding: 8px 16px;">⬆</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label for="service2">Service Bild 3</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input id="service2" name="service2" type="text" placeholder="https://..." style="flex: 1;">
+                                    <input type="file" id="service2-file" accept="image/*" style="display: none;">
+                                    <button type="button" class="admin-button" onclick="document.getElementById('service2-file').click()" style="padding: 8px 16px;">⬆</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label for="service3">Service Bild 4</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input id="service3" name="service3" type="text" placeholder="https://..." style="flex: 1;">
+                                    <input type="file" id="service3-file" accept="image/*" style="display: none;">
+                                    <button type="button" class="admin-button" onclick="document.getElementById('service3-file').click()" style="padding: 8px 16px;">⬆</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label for="service4">Service Bild 5</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input id="service4" name="service4" type="text" placeholder="https://..." style="flex: 1;">
+                                    <input type="file" id="service4-file" accept="image/*" style="display: none;">
+                                    <button type="button" class="admin-button" onclick="document.getElementById('service4-file').click()" style="padding: 8px 16px;">⬆</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label for="service5">Service Bild 6</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input id="service5" name="service5" type="text" placeholder="https://..." style="flex: 1;">
+                                    <input type="file" id="service5-file" accept="image/*" style="display: none;">
+                                    <button type="button" class="admin-button" onclick="document.getElementById('service5-file').click()" style="padding: 8px 16px;">⬆</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-actions">
+                            <button class="admin-button" type="submit">Speichern</button>
+                        </div>
+                        <div id="settings-status" class="status"></div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="./admin.js"></script>
+</body>
+</html>
