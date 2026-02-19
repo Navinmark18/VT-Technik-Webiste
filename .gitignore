@@ -13,6 +13,12 @@ dist/
 build/
 *.tsbuildinfo
 
+# SQLite databases and journals
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+
 # IDE
 .vscode/
 .idea/

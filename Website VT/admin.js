@@ -1,5 +1,40 @@
 const TOKEN_KEY = "eventVT_admin_token";
 
+// Bestimme API URL basierend auf aktueller Domain
+const API_BASE_URL = (() => {
+    // Prüfe zuerst auf sessionStorage-Einstellung
+    const stored = sessionStorage.getItem("apiBaseUrl");
+    if (stored) return stored;
+
+    // Optionaler Meta-Override in der HTML
+    const meta = document.querySelector('meta[name="api-base-url"]');
+    const metaValue = meta?.getAttribute("content")?.trim();
+    if (metaValue) return metaValue;
+
+    // Globales Config-Objekt
+    if (window.API_BASE_URL) return window.API_BASE_URL;
+
+    // Vite-Config fuer Production/Preview
+    if (typeof process !== "undefined" && process.env?.VITE_API_URL) {
+        return process.env.VITE_API_URL;
+    }
+
+    // Fuer file:// oder fehlendes Origin
+    if (!window.location.origin || window.location.origin === "null") {
+        return "http://localhost:4000";
+    }
+
+    // Fuer localhost: verwende Port 4000
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        return "http://localhost:4000";
+    }
+
+    // Fuer production: verwende gleiches Origin
+    return window.location.origin;
+})();
+
+console.log('API_BASE_URL:', API_BASE_URL);
+
 const DEFAULT_SETTINGS = {
     theme: {
         accent: "#ff4d4d",
@@ -24,7 +59,11 @@ const DEFAULT_SETTINGS = {
     },
     maintenance: {
         enabled: false,
-        message: "Wir f\u00fchren gerade Wartungsarbeiten durch. Bitte versuchen Sie es sp\u00e4ter erneut."
+        message: "Wir führen gerade Wartungsarbeiten durch. Bitte versuchen Sie es später erneut.",
+        services: {
+            mieten: false,
+            anfrage: false
+        }
     }
 };
 
@@ -53,7 +92,8 @@ const elements = {
     socialFacebook: document.getElementById("social-facebook"),
     refreshSocial: document.getElementById("refresh-social"),
     deleteSocial: document.getElementById("delete-social"),
-    recentSocial: document.getElementById("recent-social")
+    recentSocial: document.getElementById("recent-social"),
+    previewIframe: document.getElementById("preview-iframe")
 };
 
 let visitsChartInstance = null;
@@ -71,7 +111,14 @@ function normalizeSettings(settings) {
     return {
         theme: { ...DEFAULT_SETTINGS.theme, ...(settings?.theme || {}) },
         images: { ...DEFAULT_SETTINGS.images, ...(settings?.images || {}) },
-        maintenance: { ...DEFAULT_SETTINGS.maintenance, ...(settings?.maintenance || {}) }
+        maintenance: { 
+            ...DEFAULT_SETTINGS.maintenance, 
+            ...(settings?.maintenance || {}),
+            services: { 
+                ...DEFAULT_SETTINGS.maintenance.services,
+                ...(settings?.maintenance?.services || {})
+            }
+        }
     };
 }
 
@@ -96,26 +143,64 @@ function clearToken() {
 async function apiFetch(path, options = {}) {
     const token = getToken();
     const headers = { ...(options.headers || {}), Authorization: `Bearer ${token}` };
-    return fetch(path, { ...options, headers });
+    return fetch(`${API_BASE_URL}${path}`, { ...options, headers });
 }
 
 async function login(password) {
-    const response = await fetch("/api/admin/login", {
+    const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password })
     });
 
+    console.log("Login response status:", response.status);
+    console.log("Login response ok:", response.ok);
+
+    const rawText = await response.text();
+    const payload = rawText ? (() => {
+        try {
+            return JSON.parse(rawText);
+        } catch (parseError) {
+            return null;
+        }
+    })() : null;
+
     if (!response.ok) {
-        throw new Error("Login failed");
+        console.error("Login error:", payload || rawText || "(empty response)");
+        const message = payload?.error || rawText || `HTTP ${response.status}`;
+        throw new Error(`Login failed: ${message}`);
     }
 
-    const payload = await response.json();
+    console.log("Login payload:", payload);
     if (!payload?.token) {
         throw new Error("No token received");
     }
 
     localStorage.setItem(TOKEN_KEY, payload.token);
+}
+
+function updateMaintenancePreview() {
+    const messageInput = document.getElementById("maintenance-message");
+    const previewText = document.getElementById("maintenance-preview-text");
+    
+    if (!messageInput || !previewText) {
+        console.warn("Preview elements not found");
+        return;
+    }
+    
+    const messageValue = messageInput.value?.trim();
+    const displayText = messageValue || "Hier wird deine Wartungsnachricht angezeigt...";
+    
+    previewText.textContent = displayText;
+    
+    // Also update the iframe preview if it's open
+    if (elements.previewIframe && elements.previewIframe.contentDocument) {
+        const activeTab = document.querySelector('.admin-tab-button.active');
+        if (activeTab) {
+            const serviceName = activeTab.dataset.preview;
+            injectMaintenancePreview(serviceName);
+        }
+    }
 }
 
 function fillSettingsForm(settings) {
@@ -142,6 +227,11 @@ function fillSettingsForm(settings) {
 
     document.getElementById("maintenance-enabled").checked = maintenance.enabled || false;
     document.getElementById("maintenance-message").value = maintenance.message || "";
+    document.getElementById("maintenance-mieten").checked = maintenance.services?.mieten || false;
+    document.getElementById("maintenance-anfrage").checked = maintenance.services?.anfrage || false;
+    
+    // Update preview
+    updateMaintenancePreview();
 }
 
 function readSettingsForm() {
@@ -415,12 +505,14 @@ async function handleLogin(event) {
     showStatus(elements.loginError, "", false);
 
     try {
+        console.log("Attempting login with API_BASE_URL:", API_BASE_URL);
         await login(elements.loginPassword.value);
         elements.loginPassword.value = "";
         setView(true);
         await loadDashboard();
     } catch (error) {
-        showStatus(elements.loginError, "Login fehlgeschlagen. Passwort pruefen.", true);
+        console.error("Login error:", error);
+        showStatus(elements.loginError, error.message || "Login fehlgeschlagen. Passwort pruefen.", true);
     }
 }
 
@@ -512,6 +604,8 @@ async function handleMaintenanceForm(event) {
     try {
         const enabled = document.getElementById("maintenance-enabled").checked;
         const message = document.getElementById("maintenance-message").value.trim();
+        const mietenMaintenance = document.getElementById("maintenance-mieten").checked;
+        const anfrageMaintenance = document.getElementById("maintenance-anfrage").checked;
 
         const response = await apiFetch("/api/admin/settings", {
             method: "PUT",
@@ -519,7 +613,11 @@ async function handleMaintenanceForm(event) {
             body: JSON.stringify({
                 maintenance: {
                     enabled,
-                    message
+                    message,
+                    services: {
+                        mieten: mietenMaintenance,
+                        anfrage: anfrageMaintenance
+                    }
                 }
             })
         });
@@ -532,6 +630,98 @@ async function handleMaintenanceForm(event) {
     } catch (error) {
         showStatus(elements.maintenanceStatus, "Speichern fehlgeschlagen.", true);
     }
+}
+
+function handlePreviewTab(event) {
+    const button = event.target;
+    const preview = button.dataset.preview;
+    
+    if (!preview || !elements.previewIframe) return;
+    
+    // Update active tab
+    document.querySelectorAll('.admin-tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    button.classList.add('active');
+    
+    // Load preview
+    const urls = {
+        home: '/index.html',
+        mieten: '/mieten.html',
+        anfrage: '/Anfrage.html'
+    };
+    
+    if (urls[preview]) {
+        elements.previewIframe.src = urls[preview];
+        
+        // After iframe loads, inject maintenance mode if enabled
+        elements.previewIframe.onload = function() {
+            injectMaintenancePreview(preview);
+        };
+    }
+}
+
+function injectMaintenancePreview(serviceName) {
+    if (!elements.previewIframe?.contentDocument) return;
+    
+    const enabled = document.getElementById("maintenance-enabled")?.checked;
+    const serviceKey = serviceName === 'mieten' ? 'mieten' : serviceName === 'anfrage' ? 'anfrage' : null;
+    const serviceEnabled = serviceKey && document.getElementById(`maintenance-${serviceKey}`)?.checked;
+    const message = document.getElementById("maintenance-message")?.value || "";
+    
+    // Only show if global or service maintenance is enabled
+    if (!enabled && !serviceEnabled) return;
+    
+    const iframeDoc = elements.previewIframe.contentDocument;
+    
+    // Create and inject maintenance overlay
+    const style = iframeDoc.createElement('style');
+    style.textContent = `
+        body { opacity: 0 !important; transition: opacity 0.4s ease; }
+        .maintenance-preview-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+        .maintenance-preview-modal {
+            background: linear-gradient(135deg, rgba(255, 77, 77, 0.95), rgba(255, 107, 107, 0.95));
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .maintenance-preview-content {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.7;
+            word-break: break-word;
+        }
+    `;
+    iframeDoc.head.appendChild(style);
+    
+    const overlay = iframeDoc.createElement('div');
+    overlay.className = 'maintenance-preview-overlay';
+    overlay.innerHTML = `
+        <div class="maintenance-preview-modal">
+            <div class="maintenance-preview-content">
+                ⚠️<br>${message || 'Hier wird deine Wartungsnachricht angezeigt...'}
+            </div>
+        </div>
+    `;
+    iframeDoc.body.appendChild(overlay);
 }
 
 function handleLogout() {
@@ -564,6 +754,32 @@ async function init() {
     if (elements.logout) {
         elements.logout.addEventListener("click", handleLogout);
     }
+
+    // Add preview tab listeners
+    document.querySelectorAll('.admin-tab-button').forEach(button => {
+        button.addEventListener('click', handlePreviewTab);
+    });
+
+    // Add live preview for maintenance message - initialize immediately
+    const maintenanceMessage = document.getElementById("maintenance-message");
+    if (maintenanceMessage) {
+        maintenanceMessage.addEventListener("input", updateMaintenancePreview);
+        // Initialize preview with current value
+        updateMaintenancePreview();
+    }
+
+    // Add listeners for maintenance checkboxes to update preview
+    const maintenanceCheckboxes = [
+        document.getElementById("maintenance-enabled"),
+        document.getElementById("maintenance-mieten"),
+        document.getElementById("maintenance-anfrage")
+    ];
+    
+    maintenanceCheckboxes.forEach(checkbox => {
+        if (checkbox) {
+            checkbox.addEventListener("change", updateMaintenancePreview);
+        }
+    });
 
     setupFileUploadHandlers();
 

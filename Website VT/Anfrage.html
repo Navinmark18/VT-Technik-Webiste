@@ -299,8 +299,11 @@
         </footer>
     </div>
 
+    <script src="./config.js"></script>
     <script src="./main.js"></script>
     <script>
+        // Prüfe ob Anfrage-Service im Wartungsmodus ist
+        window.checkMaintenanceMode('anfrage');
         document.getElementById('anfrageForm').addEventListener('submit', function(e) {
             e.preventDefault();
             

@@ -182,6 +182,207 @@
             gap: 10px;
         }
 
+        /* Custom Checkbox Styling */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 12px 14px;
+            border-radius: 12px;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-wrapper:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background-color: transparent;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:hover {
+            border-color: var(--accent);
+            background-color: rgba(255, 77, 77, 0.1);
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:checked {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-color: var(--accent);
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:checked::after {
+            content: "✓";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .service-card {
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .service-card:hover {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .maintenance-section {
+            margin: 24px 0;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .maintenance-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Maintenance Preview Styles */
+        .maintenance-preview-section {
+            margin: 24px 0;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .maintenance-preview-section h3 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .maintenance-preview-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(15, 12, 41, 0.8), rgba(48, 43, 99, 0.8));
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .maintenance-preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 1;
+        }
+
+        .maintenance-preview-modal {
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, rgba(255, 77, 77, 0.9), rgba(255, 107, 107, 0.9));
+            padding: 35px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 380px;
+            width: 85%;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+        }
+
+        .maintenance-preview-content {
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.7;
+            word-break: break-word;
+        }
+
+        @keyframes previewPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Admin Tabs */
+        .admin-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0;
+        }
+
+        .admin-tab-button {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab-button:hover {
+            color: rgba(255, 255, 255, 0.9);
+            border-bottom-color: var(--accent);
+        }
+
+        .admin-tab-button.active {
+            color: white;
+            border-bottom-color: var(--accent);
+        }
+
+        /* Preview Container */
+        .preview-container {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
         .hidden {
             display: none;
         }
@@ -191,6 +392,196 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 12px;
+                padding: 16px 4%;
+            }
+
+            .admin-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .admin-main {
+                padding: 20px 4% 60px;
+            }
+
+            .panel {
+                padding: 20px;
+                border-radius: 16px;
+                margin-bottom: 20px;
+            }
+
+            .panel h2 {
+                font-size: 1.3rem;
+                margin-bottom: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 12px;
+            }
+
+            .stat-box {
+                padding: 14px;
+                border-radius: 12px;
+            }
+
+            .stat-box p {
+                font-size: 1.5rem;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row input,
+            .form-row textarea {
+                padding: 10px 14px;
+                font-size: 16px;
+            }
+
+            .admin-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                width: 100%;
+            }
+
+            .admin-actions {
+                flex-direction: column;
+            }
+
+            .service-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .service-card {
+                padding: 12px;
+            }
+
+            .preview-container {
+                height: 350px;
+                border-radius: 8px;
+            }
+
+            .admin-tabs {
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .admin-tab-button {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+
+            .maintenance-preview-modal {
+                padding: 24px;
+                max-width: 100%;
+                width: 90%;
+            }
+
+            .maintenance-preview-content {
+                font-size: 0.95rem;
+            }
+
+            table {
+                min-width: 0;
+                font-size: 0.85rem;
+            }
+
+            th,
+            td {
+                padding: 8px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-header {
+                padding: 12px 3%;
+            }
+
+            .admin-header h1 {
+                font-size: 1rem;
+            }
+
+            .admin-main {
+                padding: 16px 3% 40px;
+            }
+
+            .panel {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .panel h2 {
+                font-size: 1.1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-box {
+                padding: 12px;
+            }
+
+            .stat-box h3 {
+                font-size: 0.75rem;
+            }
+
+            .stat-box p {
+                font-size: 1.2rem;
+            }
+
+            .form-row label {
+                font-size: 0.9rem;
+            }
+
+            .form-row input,
+            .form-row textarea {
+                padding: 8px 12px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+
+            .admin-button {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+                width: 100%;
+            }
+
+            .admin-tabs {
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .admin-tab-button {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+
+            .preview-container {
+                height: 280px;
+            }
+
+            .checkbox-wrapper {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            .checkbox-wrapper input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+            }
+
+            .maintenance-preview-modal {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .maintenance-preview-content {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -199,7 +590,10 @@
     <div class="admin-shell">
         <header class="admin-header">
             <h1>Admin Dashboard</h1>
-            <a href="index.html">Zur Website</a>
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <a href="index.html">Zur Website</a>
+                <button id="logout" class="admin-button" type="button" style="padding: 8px 16px; font-size: 0.9rem;">🚪 Logout</button>
+            </div>
         </header>
 
         <main class="admin-main">
@@ -218,31 +612,54 @@
             </section>
 
             <section id="dashboard-view" class="hidden">
+                <!-- Preview Tabs -->
+                <div class="admin-tabs">
+                    <button class="admin-tab-button active" data-preview="home">🏠 Startseite</button>
+                    <button class="admin-tab-button" data-preview="mieten">🏢 Mietportal</button>
+                    <button class="admin-tab-button" data-preview="anfrage">📝 Anfrage</button>
+                </div>
+
+                <!-- Preview & Stats Container -->
+                <div style="display: grid; grid-template-columns: 1fr 350px; gap: 24px; margin-bottom: 30px;">
+                    <!-- Preview Panel -->
+                    <div class="panel" style="margin-bottom: 0;">
+                        <h2>📺 Website Vorschau</h2>
+                        <div class="preview-container">
+                            <iframe id="preview-iframe" src="/index.html" frameborder="0"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Stats Sidebar -->
+                    <div class="panel" style="margin-bottom: 0; display: flex; flex-direction: column;">
+                        <h2 style="font-size: 1.1rem; margin-bottom: 16px;">📊 Statistiken</h2>
+                        <div class="stats-grid" style="flex-direction: column; max-width: none;">
+                            <div class="stat-box" style="padding: 14px;">
+                                <h3 style="font-size: 0.8rem;">Gesamt</h3>
+                                <p id="stat-total" style="font-size: 1.8rem;">0</p>
+                            </div>
+                            <div class="stat-box" style="padding: 14px;">
+                                <h3 style="font-size: 0.8rem;">Letzte 24h</h3>
+                                <p id="stat-24h" style="font-size: 1.8rem;">0</p>
+                            </div>
+                            <div class="stat-box" style="padding: 14px;">
+                                <h3 style="font-size: 0.8rem;">Letzte 7 Tage</h3>
+                                <p id="stat-7d" style="font-size: 1.8rem;">0</p>
+                            </div>
+                            <div class="stat-box" style="padding: 14px;">
+                                <h3 style="font-size: 0.8rem;">Unique IPs</h3>
+                                <p id="stat-unique" style="font-size: 1.8rem;">0</p>
+                            </div>
+                        </div>
+                        <div class="admin-actions" style="margin-top: auto; gap: 8px;">
+                            <button id="refresh-stats" class="admin-button" type="button" style="padding: 8px 12px; font-size: 0.9rem;">🔄 Aktualisieren</button>
+                            <button id="delete-stats" class="admin-button" type="button" style="background: linear-gradient(135deg, #d9534f, #c9302c); padding: 8px 12px; font-size: 0.9rem;">🗑️ Löschen</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Besucher Details -->
                 <div class="panel">
-                    <h2>Besucher-Statistiken</h2>
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <h3>Gesamt</h3>
-                            <p id="stat-total">0</p>
-                        </div>
-                        <div class="stat-box">
-                            <h3>Letzte 24h</h3>
-                            <p id="stat-24h">0</p>
-                        </div>
-                        <div class="stat-box">
-                            <h3>Letzte 7 Tage</h3>
-                            <p id="stat-7d">0</p>
-                        </div>
-                        <div class="stat-box">
-                            <h3>Einzigartige IPs 7T</h3>
-                            <p id="stat-unique">0</p>
-                        </div>
-                    </div>
-                    <div class="admin-actions">
-                        <button id="refresh-stats" class="admin-button" type="button">Aktualisieren</button>
-                        <button id="delete-stats" class="admin-button" type="button" style="background: linear-gradient(135deg, #d9534f, #c9302c);">Alle löschen</button>
-                        <button id="logout" class="admin-button" type="button">Logout</button>
-                    </div>
+                    <h2>Besucherliste</h2>
                     <div style="margin-top: 30px; max-width: 800px;">
                         <canvas id="visits-chart"></canvas>
                     </div>
@@ -301,21 +718,57 @@
                     </div>
                 </div>
 
+                <!-- Settings Section -->
+                <div style="margin-top: 40px; padding-top: 40px; border-top: 2px solid rgba(255, 255, 255, 0.1);">
+                    <h2 style="margin-bottom: 24px; font-size: 1.5rem;">⚙️ Einstellungen</h2>
+                </div>
+
                 <div class="panel">
-                    <h2>Wartungsmodus</h2>
+                    <h2>🔧 Wartungsmodus</h2>
                     <form id="maintenance-form">
-                        <div class="form-row">
-                            <label for="maintenance-enabled" style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                        <div class="maintenance-section">
+                            <h3>Allgemeiner Status</h3>
+                            <label class="checkbox-wrapper">
                                 <input id="maintenance-enabled" name="maintenanceEnabled" type="checkbox">
-                                <span>Wartungsmodus aktivieren</span>
+                                <span>Gesamter Wartungsmodus aktivieren</span>
                             </label>
                         </div>
+
+                        <div class="maintenance-section">
+                            <h3>Service-spezifische Wartung</h3>
+                            <div class="service-grid">
+                                <div class="service-card">
+                                    <label class="checkbox-wrapper" style="margin: 0;">
+                                        <input id="maintenance-mieten" name="maintenanceMieten" type="checkbox">
+                                        <span>🏠 Mietservice</span>
+                                    </label>
+                                </div>
+                                <div class="service-card">
+                                    <label class="checkbox-wrapper" style="margin: 0;">
+                                        <input id="maintenance-anfrage" name="maintenanceAnfrage" type="checkbox">
+                                        <span>📝 Anfrage-Service</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-row">
                             <label for="maintenance-message">Wartungsnachricht</label>
-                            <textarea id="maintenance-message" name="maintenanceMessage" rows="4" placeholder="z.B. Wir führen gerade Wartungsarbeiten durch..."></textarea>
+                            <textarea id="maintenance-message" name="maintenanceMessage" rows="5" placeholder="z.B. Wir führen gerade Wartungsarbeiten durch. Bitte versuchen Sie es später erneut."></textarea>
                         </div>
+                        
+                        <div class="maintenance-preview-section">
+                            <h3>📺 Live-Vorschau</h3>
+                            <div id="maintenance-preview" class="maintenance-preview-container">
+                                <div class="maintenance-preview-overlay"></div>
+                                <div class="maintenance-preview-modal">
+                                    <div class="maintenance-preview-content">⚠️<br><span id="maintenance-preview-text">Hier wird deine Wartungsnachricht angezeigt...</span></div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="admin-actions">
-                            <button class="admin-button" type="submit">Speichern</button>
+                            <button class="admin-button" type="submit">💾 Änderungen speichern</button>
                         </div>
                         <div id="maintenance-status" class="status"></div>
                     </form>
@@ -437,6 +890,7 @@
         </main>
     </div>
 
+    <script src="./config.js"></script>
     <script src="./admin.js"></script>
 </body>
 </html>

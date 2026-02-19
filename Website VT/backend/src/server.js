@@ -46,15 +46,35 @@ const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
   : "*";
 
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Erlaube alle localhost Verbindungen
+    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      callback(null, true);
+      return;
+    }
+    
+    // Prüfe gegen erlaubte Origins
+    if (typeof allowedOrigins === 'string' && allowedOrigins === '*') {
+      callback(null, true);
+    } else if (Array.isArray(allowedOrigins) && allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+};
+
 app.use(helmet());
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "200kb" }));
 app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
 app.set("trust proxy", 1);
 app.use(
   rateLimit({
-    windowMs: 10 * 60 * 1000,
-    max: 100,
+    windowMs: 15 * 60 * 1000,
+    max: 500,
     standardHeaders: true,
     legacyHeaders: false,
   })
@@ -120,6 +140,10 @@ const SettingsSchema = z.object({
     .object({
       enabled: z.boolean().optional(),
       message: z.string().optional(),
+      services: z.object({
+        mieten: z.boolean().optional(),
+        anfrage: z.boolean().optional(),
+      }).optional(),
     })
     .optional(),
 });
@@ -152,6 +176,10 @@ const DEFAULT_SETTINGS = {
   maintenance: {
     enabled: false,
     message: "Wir führen gerade Wartungsarbeiten durch. Bitte versuchen Sie es später erneut.",
+    services: {
+      mieten: false,
+      anfrage: false,
+    },
   },
 };
 
@@ -172,7 +200,10 @@ function normalizeSettings(value) {
       ...DEFAULT_SETTINGS.images,
       service: [...DEFAULT_SETTINGS.images.service],
     },
-    maintenance: { ...DEFAULT_SETTINGS.maintenance },
+    maintenance: { 
+      ...DEFAULT_SETTINGS.maintenance,
+      services: { ...DEFAULT_SETTINGS.maintenance.services },
+    },
   };
 
   const coalesceString = (input, fallback) =>
@@ -223,6 +254,13 @@ function normalizeSettings(value) {
   );
 
   merged.maintenance.message = coalesceString(merged.maintenance.message, DEFAULT_SETTINGS.maintenance.message);
+
+  if (value.maintenance?.services && typeof value.maintenance.services === "object") {
+    merged.maintenance.services = { 
+      ...merged.maintenance.services, 
+      ...value.maintenance.services 
+    };
+  }
 
   return merged;
 }

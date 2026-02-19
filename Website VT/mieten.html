@@ -535,8 +535,11 @@
         </div>
     </div>
 
+    <script src="./config.js"></script>
     <script src="./main.js"></script>
     <script>
+        // Prüfe ob Mietservice im Wartungsmodus ist
+        window.checkMaintenanceMode('mieten');
         // Produktdaten
         const products = [
             {

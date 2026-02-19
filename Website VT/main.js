@@ -30,7 +30,11 @@ const DEFAULT_SETTINGS = {
     },
     maintenance: {
         enabled: false,
-        message: "Wir führen gerade Wartungsarbeiten durch. Bitte versuchen Sie es später erneut."
+        message: "Wir führen gerade Wartungsarbeiten durch. Bitte versuchen Sie es später erneut.",
+        services: {
+            mieten: false,
+            anfrage: false
+        }
     }
 };
 
@@ -73,7 +77,14 @@ function applySettings(settings) {
     const normalized = {
         theme: { ...DEFAULT_SETTINGS.theme, ...(settings?.theme || {}) },
         images: { ...DEFAULT_SETTINGS.images, ...(settings?.images || {}) },
-        maintenance: { ...DEFAULT_SETTINGS.maintenance, ...(settings?.maintenance || {}) }
+        maintenance: { 
+            ...DEFAULT_SETTINGS.maintenance, 
+            ...(settings?.maintenance || {}),
+            services: { 
+                ...DEFAULT_SETTINGS.maintenance.services,
+                ...(settings?.maintenance?.services || {})
+            }
+        }
     };
 
     setRootVar("--accent", normalized.theme.accent);
@@ -106,8 +117,25 @@ function applySettings(settings) {
         }
     });
 
-    // Wartungsmodus
+    // Wartungsmodus prüfen
+    let inMaintenance = false;
+    
+    // Prüfe globalen Wartungsmodus
     if (normalized.maintenance.enabled && !window.location.pathname.includes("admin.html")) {
+        inMaintenance = true;
+    }
+    
+    // Prüfe Service-spezifischen Wartungsmodus
+    if (!window.location.pathname.includes("admin.html")) {
+        if (window.location.pathname.includes("mieten") && normalized.maintenance.services?.mieten) {
+            inMaintenance = true;
+        }
+        if (window.location.pathname.includes("Anfrage") && normalized.maintenance.services?.anfrage) {
+            inMaintenance = true;
+        }
+    }
+    
+    if (inMaintenance) {
         showMaintenanceMode(normalized.maintenance.message);
     } else {
         hideMaintenanceMode();
