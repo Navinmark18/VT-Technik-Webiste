@@ -146,3 +146,10 @@ npm run dev
 ## Alle Node Prozesse killen
 killall node
 npm run dev
+
+
+## 🔄 Alternativen:
+Befehl	Was es macht
+git pull   	Holt + merged automatisch
+git fetch	Lädt nur herunter (kein merge)
+git merge origin/main	Nur merge (nach fetch)
