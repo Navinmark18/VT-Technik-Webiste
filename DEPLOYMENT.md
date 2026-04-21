@@ -88,3 +88,17 @@ CORS_ORIGIN=https://deine-vercel-url.vercel.app
 ## Push bei Netcup
 cd ~
 git clone https://Navinmark18:DEIN_TOKEN@github.com/Navinmark18/VT-Technik-Webiste.git    
+
+
+## Git Bfehle
+git add .              # Änderungen sammeln
+git commit -m "Text"   # Speichern mit Nachricht
+git push origin main   # Hochladen
+
+
+## Netcup pull von Repo
+git pull origin main
+
+## Webiste STarte Befehl
+"Wichtig verzeichnis auswählen dann Befhel ausführen"
+npm run dev
