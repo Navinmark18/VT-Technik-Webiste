@@ -780,6 +780,25 @@
                     </div>
                 </div>
 
+                <!-- Passwort ändern -->
+                <div class="panel">
+                    <h2>🔑 Passwort ändern</h2>
+                    <form id="password-change-form">
+                        <div class="form-row">
+                            <label for="current-password">Aktuelles Passwort</label>
+                            <input id="current-password" name="currentPassword" type="password" required>
+                        </div>
+                        <div class="form-row" style="margin-top: 16px;">
+                            <label for="new-password">Neues Passwort</label>
+                            <input id="new-password" name="newPassword" type="password" required>
+                        </div>
+                        <div class="admin-actions">
+                            <button class="admin-button" type="submit">Passwort ändern</button>
+                        </div>
+                        <div id="password-change-status" class="status"></div>
+                    </form>
+                </div>
+
                 <!-- Settings Section -->
                 <div style="margin-top: 40px; padding-top: 40px; border-top: 2px solid rgba(255, 255, 255, 0.1);">
                     <h2 style="margin-bottom: 24px; font-size: 1.5rem;">⚙️ Einstellungen</h2>

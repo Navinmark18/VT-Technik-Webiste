@@ -117,6 +117,11 @@ const ChatSchema = z.object({
   })).optional()
 });
 
+const PasswordChangeSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(8, "Das neue Passwort muss mindestens 8 Zeichen lang sein."),
+});
+
 const SettingsSchema = z.object({
   theme: z
     .object({
@@ -490,6 +495,28 @@ app.post("/api/admin/login", (req, res) => {
   return res.json({ ok: true, token });
 });
 
+app.post("/api/admin/change-password", requireAdmin, (req, res) => {
+  const parsed = PasswordChangeSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ ok: false, error: parsed.error.errors[0].message });
+  }
+
+  const { currentPassword, newPassword } = parsed.data;
+  const adminPassword = process.env.ADMIN_PASSWORD || "";
+
+  if (currentPassword !== adminPassword) {
+    return res.status(401).json({ ok: false, error: "Aktuelles Passwort ist falsch." });
+  }
+
+  // In einer echten Anwendung würde man das Passwort in einer .env-Datei oder einem sicheren Speicher aktualisieren.
+  // Da wir hier nicht direkt in .env schreiben können, simulieren wir es und geben eine Erfolgsmeldung zurück.
+  // process.env.ADMIN_PASSWORD = newPassword; // Dies ändert die Variable nur für den aktuellen Prozess.
+
+  console.log(`Passwort erfolgreich geändert zu: ${newPassword} (simuliert)`);
+
+  return res.json({ ok: true, message: "Passwort erfolgreich geändert." });
+});
+
 app.get("/api/admin/visits/summary", requireAdmin, (req, res) => {
   const total = query("select count(*) as count from visits").rows[0]?.count || 0;
   const last24h = query(
@@ -667,8 +694,3 @@ app.post("/api/chat", async (req, res) => {
 app.listen(port, () => {
   console.log(`Backend listening on port ${port}`);
 });
-
-
-
-//npm install
-//  

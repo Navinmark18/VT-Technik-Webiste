@@ -96,7 +96,9 @@ const elements = {
     deleteSocial: document.getElementById("delete-social"),
     recentSocial: document.getElementById("recent-social"),
     toggleSocial: document.getElementById("toggle-social"),
-    previewIframe: document.getElementById("preview-iframe")
+    previewIframe: document.getElementById("preview-iframe"),
+    passwordChangeForm: document.getElementById("password-change-form"),
+    passwordChangeStatus: document.getElementById("password-change-status")
 };
 
 let visitsChartInstance = null;
@@ -684,6 +686,33 @@ async function loadDashboard() {
     await Promise.all([loadSummary(), loadSocialSummary(), loadSettings()]);
 }
 
+async function handleChangePassword(event) {
+    event.preventDefault();
+    showStatus(elements.passwordChangeStatus, "Ändere Passwort...", false);
+
+    const currentPassword = document.getElementById("current-password").value;
+    const newPassword = document.getElementById("new-password").value;
+
+    try {
+        const response = await apiFetch("/api/admin/change-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok) {
+            throw new Error(payload.error || "Passwortänderung fehlgeschlagen.");
+        }
+
+        showStatus(elements.passwordChangeStatus, "Passwort erfolgreich geändert!", false);
+        elements.passwordChangeForm.reset();
+    } catch (error) {
+        showStatus(elements.passwordChangeStatus, error.message, true);
+    }
+}
+
 async function handleLogin(event) {
     event.preventDefault();
     showStatus(elements.loginError, "", false);
@@ -922,6 +951,9 @@ async function init() {
     }
     if (elements.maintenanceForm) {
         elements.maintenanceForm.addEventListener("submit", handleMaintenanceForm);
+    }
+    if (elements.passwordChangeForm) {
+        elements.passwordChangeForm.addEventListener("submit", handleChangePassword);
     }
     if (elements.refreshStats) {
         elements.refreshStats.addEventListener("click", handleRefresh);
