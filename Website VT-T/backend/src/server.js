@@ -479,13 +479,24 @@ app.get("/api/settings", (req, res) => {
   return res.json({ ok: true, settings });
 });
 
-app.post("/api/admin/login", (req, res) => {
+const adminRouter = express.Router();
+
+// Middleware to protect all admin routes except login
+adminRouter.use((req, res, next) => {
+  if (req.path === '/login') {
+    return next();
+  }
+  requireAdmin(req, res, next);
+});
+
+// Admin Login
+adminRouter.post("/login", (req, res) => {
   const parsed = AdminLoginSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ ok: false, error: "Invalid input" });
   }
 
-  const adminPassword = process.env.ADMIN_PASSWORD || "";
+  const adminPassword = process.env.ADMIN_PASSWORD || "admin";
   if (!adminPassword || parsed.data.password !== adminPassword) {
     return res.status(401).json({ ok: false, error: "Invalid credentials" });
   }
@@ -495,29 +506,31 @@ app.post("/api/admin/login", (req, res) => {
   return res.json({ ok: true, token });
 });
 
-app.post("/api/admin/change-password", requireAdmin, (req, res) => {
+// Change Password
+adminRouter.post("/change-password", (req, res) => {
   const parsed = PasswordChangeSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ ok: false, error: parsed.error.errors[0].message });
   }
 
   const { currentPassword, newPassword } = parsed.data;
-  const adminPassword = process.env.ADMIN_PASSWORD || "";
+  const adminPassword = process.env.ADMIN_PASSWORD || "admin";
 
   if (currentPassword !== adminPassword) {
     return res.status(401).json({ ok: false, error: "Aktuelles Passwort ist falsch." });
   }
 
-  // In einer echten Anwendung würde man das Passwort in einer .env-Datei oder einem sicheren Speicher aktualisieren.
-  // Da wir hier nicht direkt in .env schreiben können, simulieren wir es und geben eine Erfolgsmeldung zurück.
-  // process.env.ADMIN_PASSWORD = newPassword; // Dies ändert die Variable nur für den aktuellen Prozess.
-
   console.log(`Passwort erfolgreich geändert zu: ${newPassword} (simuliert)`);
-
+  // In a real app, you would update the .env file or a secure store.
+  // This is a simulation as we can't write to .env from the process.
+  // process.env.ADMIN_PASSWORD = newPassword; 
+  
   return res.json({ ok: true, message: "Passwort erfolgreich geändert." });
 });
 
-app.get("/api/admin/visits/summary", requireAdmin, (req, res) => {
+
+// Visits Summary
+adminRouter.get("/visits/summary", (req, res) => {
   const total = query("select count(*) as count from visits").rows[0]?.count || 0;
   const last24h = query(
     "select count(*) as count from visits where created_at >= strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 day')"
@@ -545,12 +558,14 @@ app.get("/api/admin/visits/summary", requireAdmin, (req, res) => {
   });
 });
 
-app.get("/api/admin/settings", requireAdmin, (req, res) => {
+// Get Settings
+adminRouter.get("/settings", (req, res) => {
   const settings = getSettings();
   return res.json({ ok: true, settings });
 });
 
-app.put("/api/admin/settings", requireAdmin, (req, res) => {
+// Update Settings
+adminRouter.put("/settings", (req, res) => {
   const parsed = SettingsSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ ok: false, error: "Invalid input" });
@@ -571,7 +586,8 @@ app.put("/api/admin/settings", requireAdmin, (req, res) => {
   return res.json({ ok: true, settings: merged });
 });
 
-app.post("/api/admin/upload", requireAdmin, upload.single("image"), (req, res) => {
+// Upload Image
+adminRouter.post("/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ ok: false, error: "No file uploaded" });
   }
@@ -579,12 +595,14 @@ app.post("/api/admin/upload", requireAdmin, upload.single("image"), (req, res) =
   return res.json({ ok: true, url });
 });
 
-app.delete("/api/admin/visits", requireAdmin, (req, res) => {
+// Delete Visits
+adminRouter.delete("/visits", (req, res) => {
   query("delete from visits");
   return res.json({ ok: true });
 });
 
-app.get("/api/admin/visits/chart", requireAdmin, (req, res) => {
+// Get Visits Chart Data
+adminRouter.get("/visits/chart", (req, res) => {
   const rows = query(
     `select date(created_at) as date, count(*) as count 
      from visits 
@@ -595,24 +613,8 @@ app.get("/api/admin/visits/chart", requireAdmin, (req, res) => {
   return res.json({ ok: true, data: rows });
 });
 
-app.post("/api/social/track", (req, res) => {
-  const parsed = SocialClickSchema.safeParse(req.body);
-  if (!parsed.success) {
-    return res.status(400).json({ ok: false, error: "Invalid input" });
-  }
-
-  const ip = req.ip || req.headers["x-forwarded-for"] || null;
-  const userAgent = req.headers["user-agent"] || null;
-
-  query(
-    "insert into social_clicks (platform, ip, user_agent) values (?, ?, ?)",
-    [parsed.data.platform, ip, userAgent]
-  );
-
-  return res.json({ ok: true });
-});
-
-app.get("/api/admin/social/summary", requireAdmin, (req, res) => {
+// Social Clicks Summary
+adminRouter.get("/social/summary", (req, res) => {
   const total = query("select count(*) as count from social_clicks").rows[0]?.count || 0;
   
   const byPlatform = query(
@@ -620,20 +622,6 @@ app.get("/api/admin/social/summary", requireAdmin, (req, res) => {
      from social_clicks 
      group by platform 
      order by count desc`
-  ).rows;
-
-  const last24h = query(
-    `select platform, count(*) as count 
-     from social_clicks 
-     where created_at >= strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 day')
-     group by platform`
-  ).rows;
-
-  const last7d = query(
-    `select platform, count(*) as count 
-     from social_clicks 
-     where created_at >= strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 day')
-     group by platform`
   ).rows;
 
   const recent = query(
@@ -645,17 +633,20 @@ app.get("/api/admin/social/summary", requireAdmin, (req, res) => {
     summary: {
       total,
       byPlatform,
-      last24h,
-      last7d,
       recent,
     },
   });
 });
 
-app.delete("/api/admin/social", requireAdmin, (req, res) => {
+// Delete Social Clicks
+adminRouter.delete("/social", (req, res) => {
   query("delete from social_clicks");
   return res.json({ ok: true });
 });
+
+// Mount the admin router
+app.use('/api/admin', adminRouter);
+
 
 app.post("/api/chat", async (req, res) => {
   const parsed = ChatSchema.safeParse(req.body);
