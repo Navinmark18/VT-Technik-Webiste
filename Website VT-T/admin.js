@@ -247,10 +247,21 @@ async function apiFetch(path, options = {}) {
     if (response.status === 401) {
         clearToken();
         setView(false);
-        throw new Error("Unauthorized");
+        throw new Error("Unauthorized: Bitte erneut einloggen.");
     }
 
-    return response;
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        return response.json();
+    }
+
+    const text = await response.text();
+    if (!response.ok) {
+        throw new Error(text || `HTTP-Fehler ${response.status}`);
+    }
+    
+    // Wenn die Antwort kein JSON ist, aber der Status OK ist, geben wir den Text zurück.
+    return text;
 }
 
 async function login(password) {
@@ -702,19 +713,17 @@ async function handleChangePassword(event) {
     const newPassword = document.getElementById("new-password").value;
 
     try {
-        const response = await apiFetch("/api/admin/change-password", {
+        const payload = await apiFetch("/api/admin/change-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ currentPassword, newPassword })
         });
 
-        const payload = await response.json();
-
-        if (!response.ok) {
-            throw new Error(payload.error || "Passwortänderung fehlgeschlagen.");
+        if (payload.ok === false) {
+             throw new Error(payload.error || "Passwortänderung fehlgeschlagen.");
         }
 
-        showStatus(elements.passwordChangeStatus, "Passwort erfolgreich geändert!", false);
+        showStatus(elements.passwordChangeStatus, payload.message || "Passwort erfolgreich geändert!", false);
         elements.passwordChangeForm.reset();
     } catch (error) {
         showStatus(elements.passwordChangeStatus, error.message, true);
