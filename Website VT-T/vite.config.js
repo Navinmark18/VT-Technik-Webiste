@@ -2,12 +2,13 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
 export default defineConfig({
-  plugins: [
-  ],
   server: {
     host: '0.0.0.0',
-    port: 80,
-    allowedHosts: ['eventvin.de'],
+    port: 5173,
+    allowedHosts: [
+      'eventvin.de',
+      'www.eventvin.de'
+    ],
     proxy: {
       '/api': {
         target: 'http://localhost:4000',
