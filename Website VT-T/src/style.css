@@ -1381,10 +1381,12 @@ html.consent-modal-open body {
 
     .hero-bg,
     html.page-loaded .hero-bg,
-    .hero-bg::before {
+    .hero-bg::before,
+    html.page-loaded .hero-copy,
+    html.page-loaded .hero-panel {
         animation: none !important;
         transform: none !important;
-        background-position: center center !important;
+        opacity: 1 !important;
     }
 
     .hero h1 {
