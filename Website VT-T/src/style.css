@@ -29,6 +29,14 @@
     --accent-3-rgb: 240, 211, 162;
 }
 
+@media (max-width: 768px) {
+    :root {
+        --home-hero-image: url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1200&q=80');
+        --anfrage-hero-image: url('https://images.unsplash.com/photo-1478147427282-58a87a120781?w=800&q=80');
+        --mieten-hero-image: url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80');
+    }
+}
+
 html {
     scroll-behavior: smooth;
     min-height: 100%;
@@ -1391,6 +1399,7 @@ html.consent-modal-open body {
     header {
         flex-wrap: wrap;
         padding: 14px 4%;
+        backdrop-filter: none;
     }
 
     nav {
@@ -1411,6 +1420,33 @@ html.consent-modal-open body {
 
     .hero {
         padding: 20px 4% 58px;
+    }
+
+    /* Mobile-spezifische Animation-Optimierungen */
+    .hero-bg {
+        will-change: auto;
+    }
+
+    html.page-loaded .hero-bg {
+        animation: heroIntro 540ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+    }
+
+    .hero-bg::before {
+        animation: none !important;
+    }
+
+    html.page-loaded .hero-copy {
+        animation: heroCopyIntro 480ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+    }
+
+    html.page-loaded .hero-panel {
+        animation: heroPanelIntro 480ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+    }
+
+    nav a::after,
+    .btn-nav,
+    .cta-button {
+        transition: none;
     }
 
     .hero-copy,
