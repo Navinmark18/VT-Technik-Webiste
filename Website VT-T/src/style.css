@@ -1379,6 +1379,14 @@ html.consent-modal-open body {
         grid-template-columns: 1fr;
     }
 
+    .hero-bg,
+    html.page-loaded .hero-bg,
+    .hero-bg::before {
+        animation: none !important;
+        transform: none !important;
+        background-position: center center !important;
+    }
+
     .hero h1 {
         font-size: clamp(1.65rem, 7.2vw, 2.7rem);
         max-width: 100%;

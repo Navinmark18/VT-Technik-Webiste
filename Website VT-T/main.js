@@ -420,7 +420,8 @@ function setupHeroMotion() {
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
-    if (reduceMotion || coarsePointer) {
+    const tabletScreen = window.matchMedia("(max-width: 1100px)").matches;
+    if (reduceMotion || coarsePointer || tabletScreen) {
         document.documentElement.classList.add("page-loaded");
         return;
     }
