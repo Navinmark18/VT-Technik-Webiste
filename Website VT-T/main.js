@@ -374,8 +374,9 @@ function setupScrollAnimations() {
     const lowPowerDevice = typeof navigator !== "undefined"
         && typeof navigator.hardwareConcurrency === "number"
         && navigator.hardwareConcurrency <= 4;
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
 
-    if (reduceMotion || lowPowerDevice) {
+    if (reduceMotion || lowPowerDevice || coarsePointer) {
         targets.forEach((element) => {
             element.classList.add("is-visible");
         });
@@ -418,7 +419,8 @@ function setupHeroMotion() {
     }
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) {
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    if (reduceMotion || coarsePointer) {
         document.documentElement.classList.add("page-loaded");
         return;
     }
