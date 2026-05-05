@@ -1,5 +1,6 @@
 const TOKEN_KEY = "eventVIN_admin_token";
 const COLLAPSED_ROW_COUNT = 8;
+const SETTINGS_CACHE_KEY = "eventVIN_settings_cache";
 
 // Bestimme API URL basierend auf aktueller Domain
 const API_BASE_URL = (() => {
@@ -444,6 +445,8 @@ function setupFileUploadHandlers() {
                 const savePayload = await saveResponse.json();
                 fillSettingsForm(savePayload.settings || DEFAULT_SETTINGS);
                 updateImagePreviews();
+                // Cache leeren
+                localStorage.removeItem(SETTINGS_CACHE_KEY);
                 showStatus(elements.settingsStatus, "Bild hochgeladen und gespeichert.", false);
             } catch (error) {
                 showStatus(elements.settingsStatus, "Upload fehlgeschlagen.", true);
@@ -763,6 +766,8 @@ async function handleSaveSettings(event) {
 
         const payload = await response.json();
         fillSettingsForm(payload.settings || DEFAULT_SETTINGS);
+        // Cache der Hauptseite leeren, damit Änderungen sofort sichtbar sind
+        localStorage.removeItem(SETTINGS_CACHE_KEY);
         showStatus(elements.settingsStatus, "Gespeichert! Aendereungen sind live.", false);
     } catch (error) {
         showStatus(elements.settingsStatus, "Speichern fehlgeschlagen.", true);
