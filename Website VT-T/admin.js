@@ -1,6 +1,6 @@
 const TOKEN_KEY = "eventVIN_admin_token";
 const COLLAPSED_ROW_COUNT = 8;
-const SETTINGS_CACHE_KEY = "eventVIN_settings_cache";
+const SETTINGS_CACHE_KEY = "eventVIN_settings_cache_v2";
 
 // Bestimme API URL basierend auf aktueller Domain
 const API_BASE_URL = (() => {

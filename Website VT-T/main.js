@@ -5,7 +5,7 @@ const API_BASE_URL = typeof process !== 'undefined' && process.env.VITE_API_URL
 
 const SETTINGS_ENDPOINT = `${API_BASE_URL}/api/settings`;
 const TRACK_ENDPOINT = `${API_BASE_URL}/api/track`;
-const SETTINGS_CACHE_KEY = "eventVIN_settings_cache";
+const SETTINGS_CACHE_KEY = "eventVIN_settings_cache_v2";
 let hasTrackedVisit = false;
 
 const DEFAULT_SETTINGS = {
