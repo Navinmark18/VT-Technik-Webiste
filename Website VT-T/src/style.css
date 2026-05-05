@@ -1372,7 +1372,7 @@ html.consent-modal-open body {
     inset: 0;
 }
 
-@media (max-width: 1100px) {
+@media (pointer: coarse), (max-width: 1100px) {
     .hero-grid,
     .editorial-layout,
     .cta-content {
@@ -1382,11 +1382,18 @@ html.consent-modal-open body {
     .hero-bg,
     html.page-loaded .hero-bg,
     .hero-bg::before,
+    .hero-bg::after,
     html.page-loaded .hero-copy,
     html.page-loaded .hero-panel {
         animation: none !important;
+        animation-play-state: paused !important;
         transform: none !important;
         opacity: 1 !important;
+        background-position: center center !important;
+    }
+
+    .hero-bg {
+        background-size: cover !important;
     }
 
     .hero h1 {
